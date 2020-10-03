@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang='en'>
+
+<head>
+    <meta charset='UTF-8' />
+    <meta name='viewport' content='width=device-width, initial-scale=1.0' />
+    <meta http-equiv='X-UA-Compatible' content='ie=edge' />
+    <title>Document</title>
+    <link rel="stylesheet" href="./css/bootstrap.css">
+    <!-- 导入 vue 文件 -->
+    <script src='./lib/vue_2.5.22.js'></script>
+    <script src="./lib/vue-router_3.0.2.js"></script>
+</head>
+
+<body>
+    <!-- 被 vm 实例所控制的区域 -->
+    <div id='app'>
+        <!-- 路由占位符 -->
+        <router-link to="/register">注册</router-link>
+        <router-link to="/login">登录</router-link>
+        <router-view></router-view>
+    </div>
+    <script>
+        const Register = {
+            template: `<div>
+            <h1>注册用户</h1>
+            <hr />
+                <table border="1" cellspacing="0" cellpadding="5">
+                    <caption>注册信息</caption>
+                    <tr>
+                        <td> 用户名： </td>
+                        <td> <input type="text"> </td>
+                    </tr>
+                    <tr>
+                        <td> 密码： </td>
+                        <td> <input type="text"> </td>
+                    </tr>
+                    <tr>
+                        <td> 重复密码： </td>
+                        <td> <input type="text"> </td>
+                    </tr>
+                    <tr>
+                        <td> 验证码： </td>
+                        <td> <input type="text"> </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" align="center"> <input type="button" value="注册新用户" > </td>
+                    </tr>
+                </table>
+            </div>`
+        }
+
+        const Login = {
+            template: `<div>
+            <h1>请选择登录方式</h1>
+            <hr />
+            <router-link to="/login/account">账号密码登录</router-link> &nbsp;&nbsp;
+            <router-link to="/login/phone">扫码登录</router-link>
+            <!-- 子路由组件将会在router-view中显示 -->
+            <br><br><br>
+            <router-view></router-view>
+            </div>`
+        }
+
+        const account = {
+            template: `<div>
+                账号：<input><br>
+                密码：<input><br>
+                <button>登录</button>
+                <button @click='toReg'>注册新用户</button>
+            </div>`,
+            methods: {
+                toReg: function() {
+                    this.$router.push('/register')
+                }
+            },
+        }
+
+        const Phone = {
+            template: `<div>
+                <h1>
+                <div>扫我二维码</div>
+                <img src='images/erweima.png' />
+                <br>
+                <button @click='toReg'>注册新用户</button>
+                </h1>
+            </div>`,
+            methods: {
+                toReg: function() {
+                    this.$router.push('/register')
+                }
+            },
+        }
+
+        const router = new VueRouter({
+            // 所有的路由规则
+            routes: [
+                { path: '/', redirect:"/register" },
+                { path: '/register', component: Register },
+                { path: '/login', component: Login, children:[
+                    {path: '/login/', redirect:'/login/account'},
+                    {path: '/login/account', component: account},
+                    {path: '/login/phone', component: Phone},
+                ]},
+            ]
+        })
+
+        // 创建 vm 实例对象
+        const vm = new Vue({
+            // 指定控制的区域
+            el: '#app',
+            data: {},
+            router
+        })
+    </script>
+</body>
+
+</html>
